@@ -10,6 +10,9 @@
 
 module load conda/latest
 module load python/3.11.4
+
+pip install -y pyopencl
+
 module load intel-oneapi
 module load init_opencl/2023.1.0
 python opencl_test.py 
