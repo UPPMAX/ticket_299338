@@ -1,5 +1,6 @@
 #!/bin/bash
 #SBATCH -M snowy
+#SBATCH -A staff
 
 # Don't! Gives error:
 #
