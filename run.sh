@@ -13,6 +13,13 @@ module load python/3.11.4
 
 pip install pyopencl
 
+# Fixes:
+#
+# /home/richel/.local/lib/python3.11/site-packages/pytools/persistent_dict.py:63: RecommendedHashNotFoundWarning: Unable to import recommended hash 'siphash24.siphash13', falling back to 'hashlib.sha256'. Run 'python3 -m pip install siphash24' to install the recommended hash.
+#   warn("Unable to import recommended hash 'siphash24.siphash13', "
+#
+python3 -m pip install siphash24
+
 module load intel-oneapi
 module load init_opencl/2023.1.0
 python opencl_test.py 

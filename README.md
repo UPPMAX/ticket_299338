@@ -2,6 +2,21 @@
 
 Notes for RT ticket 299338
 
+## Goal
+
+The user should be able to run [opencl_test.py](opencl_test.py) on Snowy.
+
+On a local computer this gives:
+
+```
+$ python opencl_test.py 
+[<pyopencl.Platform 'Intel(R) CPU Runtime for OpenCL(TM) Applications' at 0x5629e025ea10>]
+[<pyopencl.Device 'Intel(R) Core(TM) i5-7200U CPU @ 2.50GHz' on 'Intel(R) CPU Runtime for OpenCL(TM) Applications' at 0x5629e0216fe8>]
+```
+
+Looking at [Snowy's hardware specifications](https://docs.uppmax.uu.se/hardware/clusters/snowy/),
+we can conclude that Snowy has Intel processors (Xeon) too.
+
 ## Progress
 
 ### Attempt 2
