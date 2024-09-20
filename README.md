@@ -17,6 +17,26 @@ $ python opencl_test.py
 Looking at [Snowy's hardware specifications](https://docs.uppmax.uu.se/hardware/clusters/snowy/),
 we can conclude that Snowy has Intel processors (Xeon) too.
 
+And indeed, this is the result on Snowy:
+
+```
+[<pyopencl.Platform 'Portable Computing Language' at 0x2b95af605d00>]
+[<pyopencl.Device 'pthread-Intel(R) Xeon(R) CPU E5-2660 0 @ 2.20GHz' on 'Portable Computing Language' at 0xf1c4e0>]
+```
+
+## Solution
+
+Add the line
+
+```bash
+pip install pocl-binary-distribution
+```
+
+to your script and it works!
+
+A full and tested script is [run.sh](run.sh).
+
+
 ## Progress
 
 ### Attempt 5
@@ -30,9 +50,85 @@ suggests to add the line below to the script:
 pip install pocl-binary-distribution
 ```
 
-Then
+So, change the run scrip to:
 
+```
+#!/bin/bash
+#SBATCH -M snowy
+#SBATCH -A staff
 
+# Don't! Gives error:
+#
+# Lmod has detected the following error:  Cannot load module "conda/latest" because these module(s) are loaded:
+#    python
+#
+# module load python/3.11.4
+
+module load conda/latest
+module load python/3.11.4
+
+pip install pyopencl
+
+# Fixes:
+#
+# /home/richel/.local/lib/python3.11/site-packages/pytools/persistent_dict.py:63: RecommendedHashNotFoundWarning: Unable to import recommended hash 'siphash24.siphash13', falling back to 'hashlib.sha256'. Run 'python3 -m pip install siphash24' to install the recommended hash.
+#   warn("Unable to import recommended hash 'siphash24.siphash13', "
+#
+pip install siphash24
+
+# Fixes PLATFORM_NOT_FOUND_KHR,
+# from https://stackoverflow.com/a/77318195
+#
+pip install pocl-binary-distribution
+
+module load intel-oneapi
+module load init_opencl/2023.1.0
+python opencl_test.py
+```
+
+Then use sbatch:
+
+```
+[richel@rackham3 ticket_299338]$ sbatch run.sh
+Submitted batch job 9657006 on cluster snowy
+```
+
+And this worked:
+
+```
+[richel@rackham3 ticket_299338]$ cat slurm-9657006.out
+The variable CONDA_ENVS_PATH contains the location of your environments. Set it to your project's environments folder if you have one.
+Otherwise, the default is ~/.conda/envs. Remember to export the variable with export CONDA_ENVS_PATH=/proj/...
+
+You may run "source conda_init.sh" to initialise your shell to be able
+to run "conda activate" and "conda deactivate" etc.
+Just remember that this command adds stuff to your shell outside the scope of the module system.
+
+REMEMBER TO USE 'conda clean -a' once in a while
+
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: pyopencl in /home/richel/.local/lib/python3.11/site-packages (2024.2.7)
+Requirement already satisfied: numpy in /sw/comp/python/3.11.4/rackham/lib/python3.11/site-packages (from pyopencl) (1.24.4)
+Requirement already satisfied: platformdirs>=2.2.0 in /sw/comp/python/3.11.4/rackham/lib/python3.11/site-packages (from pyopencl) (3.10.0)
+Requirement already satisfied: pytools>=2024.1.5 in /home/richel/.local/lib/python3.11/site-packages (from pyopencl) (2024.1.14)
+Requirement already satisfied: typing-extensions>=4 in /sw/comp/python/3.11.4/rackham/lib/python3.11/site-packages (from pytools>=2024.1.5->pyopencl) (4.7.1)
+WARNING: There was an error checking the latest version of pip.
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: siphash24 in /home/richel/.local/lib/python3.11/site-packages (1.6)
+WARNING: There was an error checking the latest version of pip.
+Defaulting to user installation because normal site-packages is not writeable
+Collecting pocl-binary-distribution
+  Obtaining dependency information for pocl-binary-distribution from https://files.pythonhosted.org/packages/7d/2d/7e7b1a6d7f807655d891a7d92fca12ea8cfae6f5dd48953f45d03d47d632/pocl_binary_distribution-3.0-py2.py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata
+  Downloading pocl_binary_distribution-3.0-py2.py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (242 bytes)
+Downloading pocl_binary_distribution-3.0-py2.py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (58.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 58.1/58.1 MB 5.7 MB/s eta 0:00:00
+Installing collected packages: pocl-binary-distribution
+Successfully installed pocl-binary-distribution-3.0
+WARNING: There was an error checking the latest version of pip.
+Loading init_opencl version 2023.1.0
+[<pyopencl.Platform 'Portable Computing Language' at 0x2b95af605d00>]
+[<pyopencl.Device 'pthread-Intel(R) Xeon(R) CPU E5-2660 0 @ 2.20GHz' on 'Portable Computing Language' at 0xf1c4e0>]
+```
 
 ### Attempt 4
 
