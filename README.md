@@ -19,9 +19,58 @@ we can conclude that Snowy has Intel processors (Xeon) too.
 
 ## Progress
 
+### Attempt 5
+
+Here we try to solve `PLATFORM_NOT_FOUND_KHR`
+
+[This StackOverflow post](https://stackoverflow.com/a/77318195)
+suggests to add the line below to the script:
+
+```
+pip install pocl-binary-distribution
+```
+
+Then
+
+
+
 ### Attempt 4
 
 Here we try to solve `PLATFORM_NOT_FOUND_KHR`
+
+[This StackOverflow post](https://stackoverflow.com/a/48437885)
+suggests to load OpenCL first.
+
+Do we have OpenCL on UPPMAX? Seems like a yes:
+
+```
+[richel@rackham3 ticket_299338]$ module spider OpenCL
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  init_opencl:
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+     Versions:
+        init_opencl/2021.4.0
+        init_opencl/2022.0.2
+        init_opencl/2022.1.0
+        init_opencl/2022.2.0
+        init_opencl/2022.2.1
+        init_opencl/2023.0.0
+        init_opencl/2023.1.0
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  For detailed information about a specific "init_opencl" package (including how to load the modules) use the module's full name.
+  Note that names that have a trailing (E) are extensions provided by other modules.
+  For example:
+
+     $ module spider init_opencl/2023.1.0
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+```
+
+But ... it is already loaded in [run.sh](run.sh)!
+
+
 
 ### Attempt 3
 
